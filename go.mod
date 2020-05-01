@@ -1,1 +1,3 @@
-module github.com/hillu/go-yara
+module github.com/Mimoja/go-yara
+
+go 1.13

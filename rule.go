@@ -79,8 +79,9 @@ static const char* string_identifier(YR_STRING* s) {
 // associated with a string, using YARA's macro-based implementation.
 static void string_matches(YR_STRING* s, const YR_MATCH *matches[], int *n) {
 	const YR_MATCH *match;
+	const YR_SCAN_CONTEXT* context = 0;
 	int i = 0;
-	yr_string_matches_foreach(s, match) {
+	yr_string_matches_foreach(context, s, match) {
 		if (i < *n)
 			matches[i] = match;
 		i++;
@@ -143,8 +144,6 @@ func (r *Rule) MetaList() (metas []Meta) {
 		id := C.GoString(cid)
 		var val interface{}
 		switch cptr._type {
-		case C.META_TYPE_NULL:
-			val = nil
 		case C.META_TYPE_STRING:
 			val = C.GoString(cstr)
 		case C.META_TYPE_INTEGER:
@@ -187,12 +186,12 @@ func (r *Rule) Metas() (metas map[string]interface{}) {
 
 // IsPrivate returns true if the rule is marked as private.
 func (r *Rule) IsPrivate() bool {
-	return (r.cptr.g_flags & C.RULE_GFLAGS_PRIVATE) != 0
+	return (r.cptr.flags & C.RULE_FLAGS_PRIVATE) != 0
 }
 
 // IsGlobal returns true if the rule is marked as global.
 func (r *Rule) IsGlobal() bool {
-	return (r.cptr.g_flags & C.RULE_GFLAGS_GLOBAL) != 0
+	return (r.cptr.flags & C.RULE_FLAGS_GLOBAL) != 0
 }
 
 // String represents a string as part of a rule.
